@@ -19,36 +19,36 @@ const getEntities = (editorState: EditorState, entityType: string | null = null)
   const content = editorState.getCurrentContent();
   const entities: any = [];
   content.getBlocksAsArray().forEach((block) => {
-      let selectedEntity: any = null;
-      block.findEntityRanges(
-          (character) => {
-              if (character.getEntity() !== null) {
-                  const entity = content.getEntity(character.getEntity());
-                  if (!entityType || (entityType && entity.getType() === entityType)) {
-                      const entityMap = content.getEntity(character.getEntity())
-                      const entityJs = (entityMap as any).toJS()
-                      const mention = entityJs.data.mention.toJS()
-                      const entityRaw = {
-                        type: entityJs.type,
-                        mutability: entityJs.mutability,
-                        data: {
-                          mention
-                        }
-                      }
-
-                      selectedEntity = {
-                          entityKey: character.getEntity(),
-                          blockKey: block.getKey(),
-                          entity: entityRaw
-                      };
-                      return true;
-                  }
+    let selectedEntity: any = null;
+    block.findEntityRanges(
+      (character) => {
+        if (character.getEntity() !== null) {
+          const entity = content.getEntity(character.getEntity());
+          if (!entityType || (entityType && entity.getType() === entityType)) {
+            const entityMap = content.getEntity(character.getEntity())
+            const entityJs = (entityMap as any).toJS()
+            const mention = entityJs.data.mention.toJS()
+            const entityRaw = {
+              type: entityJs.type,
+              mutability: entityJs.mutability,
+              data: {
+                mention
               }
-              return false;
-          },
-          (start, end) => {
-              entities.push({...selectedEntity, start, end});
-          });
+            }
+
+            selectedEntity = {
+              entityKey: character.getEntity(),
+              blockKey: block.getKey(),
+              entity: entityRaw
+            };
+            return true;
+          }
+        }
+        return false;
+      },
+      (start, end) => {
+        entities.push({ ...selectedEntity, start, end });
+      });
   });
   return entities;
 };
@@ -80,18 +80,13 @@ class App extends React.Component<Props, State> {
     })
   }
 
-  onSearchChange = ({ value }: any) => {
+  onSearchChange = ({ value }: { value: string }) => {
     const entities = getEntities(this.state.editorState, '$mention')
     const existingEntityIds = entities.map(e => e.entity.data.mention.id)
     const filteredMentions = mentions.filter(m => !existingEntityIds.includes(m.id))
     this.setState({
       suggestions: defaultSuggestionsFilter(value, filteredMentions),
     })
-  }
-
-  onAddMention = (mention: any) => {
-    console.log(`onAddMention: `, mention)
-    // get the mention object selected
   }
 
   onClickEditorContainer = () => {
@@ -116,7 +111,6 @@ class App extends React.Component<Props, State> {
           <MentionSuggestions
             onSearchChange={this.onSearchChange}
             suggestions={this.state.suggestions}
-            onAddMention={this.onAddMention}
           />
         </div>
       </div>

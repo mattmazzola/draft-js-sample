@@ -14,10 +14,6 @@ body {
 .editor {
   border: 1px solid #ddd;
   cursor: text;
-  padding: 16px;
+  padding: 0.5em;
   background: #fefefe;
-}
-
-.editor :global(.public-DraftEditor-content) {
-  min-height: 140px;
 }
