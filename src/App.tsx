@@ -18,19 +18,21 @@ interface State {
 class App extends React.Component<Props, State> {
   domEditor: any
   mentionPlugin: any
+
   state = {
     editorState: EditorState.createEmpty(),
     suggestions: mentions
   }
+
   constructor(props: Props) {
     super(props);
 
     this.mentionPlugin = createMentionPlugin({
       entityMutability: 'IMMUTABLE',
-      mentionPrefix: '@'
+      mentionPrefix: '$',
+      mentionTrigger: '$'
     });
   }
-
 
   setDomEditorRef = (ref: any) => this.domEditor = ref
 
@@ -40,7 +42,9 @@ class App extends React.Component<Props, State> {
     })
   }
 
-  onSearchChange = ({ value }: { value: string }) => {
+  onSearchChange = (...args: any[]) => {
+    console.log(`onSearchChange: `, args)
+    const { value } = args[0]
     this.setState({
       suggestions: defaultSuggestionsFilter(value, mentions),
     })
