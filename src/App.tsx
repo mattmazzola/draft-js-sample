@@ -15,6 +15,44 @@ interface State {
   suggestions: IMention[]
 }
 
+const getEntities = (editorState: EditorState, entityType: string | null = null): any[] => {
+  const content = editorState.getCurrentContent();
+  const entities: any = [];
+  content.getBlocksAsArray().forEach((block) => {
+      let selectedEntity: any = null;
+      block.findEntityRanges(
+          (character) => {
+              if (character.getEntity() !== null) {
+                  const entity = content.getEntity(character.getEntity());
+                  if (!entityType || (entityType && entity.getType() === entityType)) {
+                      const entityMap = content.getEntity(character.getEntity())
+                      const entityJs = (entityMap as any).toJS()
+                      const mention = entityJs.data.mention.toJS()
+                      const entityRaw = {
+                        type: entityJs.type,
+                        mutability: entityJs.mutability,
+                        data: {
+                          mention
+                        }
+                      }
+
+                      selectedEntity = {
+                          entityKey: character.getEntity(),
+                          blockKey: block.getKey(),
+                          entity: entityRaw
+                      };
+                      return true;
+                  }
+              }
+              return false;
+          },
+          (start, end) => {
+              entities.push({...selectedEntity, start, end});
+          });
+  });
+  return entities;
+};
+
 class App extends React.Component<Props, State> {
   domEditor: any
   mentionPlugin: any
@@ -42,11 +80,12 @@ class App extends React.Component<Props, State> {
     })
   }
 
-  onSearchChange = (...args: any[]) => {
-    console.log(`onSearchChange: `, args)
-    const { value } = args[0]
+  onSearchChange = ({ value }: any) => {
+    const entities = getEntities(this.state.editorState, '$mention')
+    const existingEntityIds = entities.map(e => e.entity.data.mention.id)
+    const filteredMentions = mentions.filter(m => !existingEntityIds.includes(m.id))
     this.setState({
-      suggestions: defaultSuggestionsFilter(value, mentions),
+      suggestions: defaultSuggestionsFilter(value, filteredMentions),
     })
   }
 
