@@ -25,12 +25,12 @@ class App extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.mentionPlugin = createMentionPlugin();
+    this.mentionPlugin = createMentionPlugin({
+      entityMutability: 'IMMUTABLE',
+      mentionPrefix: '@'
+    });
   }
 
-  componentDidMount() {
-    this.domEditor.focus()
-  }
 
   setDomEditorRef = (ref: any) => this.domEditor = ref
 
@@ -43,10 +43,11 @@ class App extends React.Component<Props, State> {
   onSearchChange = ({ value }: { value: string }) => {
     this.setState({
       suggestions: defaultSuggestionsFilter(value, mentions),
-    });
+    })
   }
 
-  onAddMention = () => {
+  onAddMention = (mention: any) => {
+    console.log(`onAddMention: `, mention)
     // get the mention object selected
   }
 
