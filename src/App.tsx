@@ -1,121 +1,139 @@
 import * as React from 'react'
-import { EditorState } from 'draft-js'
-import Editor from 'draft-js-plugins-editor'
-import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-plugin'
+import ObjectEditor, { IObject } from './ObjectEditor'
 import mentions, { IMention } from './mentions'
 import './App.css'
-import 'draft-js/dist/Draft.css'
-import 'draft-js-mention-plugin/lib/plugin.css'
 
 interface Props {
 }
 
 interface State {
-  editorState: EditorState,
-  suggestions: IMention[]
+  mentions: IMention[],
+  newMentionValue: string,
+  objects: IObject[],
+  selectedObject: IObject | null
 }
 
-const getEntities = (editorState: EditorState, entityType: string | null = null): any[] => {
-  const content = editorState.getCurrentContent();
-  const entities: any = [];
-  content.getBlocksAsArray().forEach((block) => {
-    let selectedEntity: any = null;
-    block.findEntityRanges(
-      (character) => {
-        if (character.getEntity() !== null) {
-          const entity = content.getEntity(character.getEntity());
-          if (!entityType || (entityType && entity.getType() === entityType)) {
-            const entityMap = content.getEntity(character.getEntity())
-            const entityJs = (entityMap as any).toJS()
-            const mention = entityJs.data.mention.toJS()
-            const entityRaw = {
-              type: entityJs.type,
-              mutability: entityJs.mutability,
-              data: {
-                mention
-              }
-            }
-
-            selectedEntity = {
-              entityKey: character.getEntity(),
-              blockKey: block.getKey(),
-              entity: entityRaw
-            };
-            return true;
-          }
-        }
-        return false;
-      },
-      (start, end) => {
-        entities.push({ ...selectedEntity, start, end });
-      });
-  });
-  return entities;
-};
-
-class App extends React.Component<Props, State> {
-  domEditor: any
-  mentionPlugin: any
-
-  state = {
-    editorState: EditorState.createEmpty(),
-    suggestions: mentions
+export default class extends React.Component<Props, State> {
+  state: State = {
+    mentions,
+    newMentionValue: '',
+    objects: [],
+    selectedObject: null
   }
 
-  constructor(props: Props) {
-    super(props);
-
-    this.mentionPlugin = createMentionPlugin({
-      entityMutability: 'IMMUTABLE',
-      mentionPrefix: '$',
-      mentionTrigger: '$'
-    });
-  }
-
-  setDomEditorRef = (ref: any) => this.domEditor = ref
-
-  onChange = (editorState: EditorState) => {
+  onChangeNewMention = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
-      editorState
+      newMentionValue: e.target.value
     })
   }
 
-  onSearchChange = ({ value }: { value: string }) => {
-    const entities = getEntities(this.state.editorState, '$mention')
-    const existingEntityIds = entities.map(e => e.entity.data.mention.id)
-    const filteredMentions = mentions.filter(m => !existingEntityIds.includes(m.id))
-    this.setState({
-      suggestions: defaultSuggestionsFilter(value, filteredMentions),
-    })
+  onSubmitNewMention = (e: React.FormEvent<any>) => {
+    e.preventDefault()
+
+    const newMention: IMention = {
+      id: `mention-${(new Date().getTime())}`,
+      link: '',
+      name: this.state.newMentionValue
+    }
+
+    this.setState(prevState => ({
+      mentions: [...prevState.mentions, newMention],
+      newMentionValue: ''
+    }))
   }
 
-  onClickEditorContainer = () => {
-    this.domEditor.focus()
+  onSubmitObject = (newObject: IObject) => {
+    // Editing: Update object
+    if (this.state.selectedObject) {
+      const existingObjectIndex = this.state.objects.findIndex(o => o.id === newObject.id)
+      if (existingObjectIndex < 0) {
+        throw new Error(`Attempting to update object: ${newObject.id} but could not find it in list of existing objects.`)
+      }
+      this.setState(prevState => ({
+        objects: [...prevState.objects.slice(0, existingObjectIndex), newObject, ...prevState.objects.slice(existingObjectIndex + 1)]
+      }))
+    }
+    // Not Editing: New object
+    else {
+      this.setState(prevState => ({
+        objects: [...prevState.objects, newObject]
+      }))
+    }
+  }
+
+  onClickObject = (object: IObject) => {
+    this.setState({
+      selectedObject: object
+    })
   }
 
   render() {
-    const { MentionSuggestions } = this.mentionPlugin
-    const plugins = [this.mentionPlugin]
-
     return (
       <div id="content">
-        <h1>Draft.js Editor</h1>
+        <header>
+          <h1>Draft.js Editor Sample</h1>
+        </header>
 
-        <div className="editor" onClick={this.onClickEditorContainer}>
-          <Editor
-            editorState={this.state.editorState}
-            onChange={this.onChange}
-            plugins={plugins}
-            ref={this.setDomEditorRef}
-          />
-          <MentionSuggestions
-            onSearchChange={this.onSearchChange}
-            suggestions={this.state.suggestions}
-          />
+        <div className="lists-grid">
+          <div>
+            <h2>Total Mentions:</h2>
+
+            <h3>Create Mention:</h3>
+            <form onSubmit={this.onSubmitNewMention} className="mentionForm" >
+              <input
+                required={true}
+                value={this.state.newMentionValue}
+                onChange={this.onChangeNewMention}
+              />
+              <div>
+                <button type="submit">Create</button>
+              </div>
+            </form>
+            <ul>
+              {this.state.mentions.length === 0
+                ? <li>There are no mentions</li>
+                : this.state.mentions.map(mention =>
+                  <li key={mention.id}>{mention.id} : {mention.name}</li>
+                )}
+            </ul>
+          </div>
+
+          <div>
+            <h2>Compound Objects:</h2>
+
+            <h3>Create new object:</h3>
+            <ObjectEditor
+              onSubmit={this.onSubmitObject}
+              object={this.state.selectedObject}
+            />
+
+            <h3>Objects:</h3>
+            <ul>
+              {this.state.objects.length === 0
+                ? <li>There are no objects</li>
+                : this.state.objects.map((object, i) =>
+                  <li key={i}>
+                    Title: {object.title} <br />
+                    Type: {object.type} <br />
+                    Phrase: {object.mentionPhrase} <br />
+                    <button
+                      type="button"
+                      onClick={() => this.onClickObject(object)}
+                    >Edit</button>
+                  </li>
+                )}
+            </ul>
+          </div>
         </div>
+
+        <footer>
+          <h3>Requirements:</h3>
+          <ul>
+            <li>Demonstrate loading state from previously created object, editing object and saving</li>
+            <li>Demonstrate mentions to exclude those already included in the editor state</li>
+          </ul>
+        </footer>
       </div>
     );
   }
 }
-
-export default App;

@@ -7,13 +7,40 @@ body {
 }
 
 #content {
-  width: 480px;
+  width: 800px;
   margin: 0 auto;
 }
 
-.editor {
-  border: 1px solid #ddd;
-  cursor: text;
+header {
+  text-align: center;
+  padding: 1em;
+  border-bottom: 1px solid grey;
+}
+
+.lists-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  grid-gap: 2em;
+}
+
+.mentionForm {
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  grid-gap: 1em;
+}
+
+input {
+  display: block;
+  width: 100%;
   padding: 0.5em;
-  background: #fefefe;
+}
+
+button {
+  border-radius: 6px;
+  border: none;
+  background: #2D87DB;
+  color: white;
+  padding: 0.5em 1em;
+  font-size: 1rem;
 }
