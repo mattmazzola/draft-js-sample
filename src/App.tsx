@@ -42,6 +42,12 @@ export default class extends React.Component<Props, State> {
     }))
   }
 
+  onResetObjectEditor = () => {
+    this.setState({
+      selectedObject: null
+    })
+  }
+  
   onSubmitObject = (newObject: IObject) => {
     // Editing: Update object
     if (this.state.selectedObject) {
@@ -50,7 +56,8 @@ export default class extends React.Component<Props, State> {
         throw new Error(`Attempting to update object: ${newObject.id} but could not find it in list of existing objects.`)
       }
       this.setState(prevState => ({
-        objects: [...prevState.objects.slice(0, existingObjectIndex), newObject, ...prevState.objects.slice(existingObjectIndex + 1)]
+        objects: [...prevState.objects.slice(0, existingObjectIndex), newObject, ...prevState.objects.slice(existingObjectIndex + 1)],
+        selectedObject: null
       }))
     }
     // Not Editing: New object
@@ -104,6 +111,7 @@ export default class extends React.Component<Props, State> {
             <h3>Create new object:</h3>
             <ObjectEditor
               onSubmit={this.onSubmitObject}
+              onReset={this.onResetObjectEditor}
               object={this.state.selectedObject}
             />
 
@@ -111,9 +119,10 @@ export default class extends React.Component<Props, State> {
             <ul>
               {this.state.objects.length === 0
                 ? <li>There are no objects</li>
-                : this.state.objects.map((object, i) =>
-                  <li key={i}>
-                    Title: {object.title} <br />
+                : this.state.objects.map(object =>
+                  <li key={object.id}>
+                    Id: {object.id}<br />
+                    <b>Title: {object.title}</b><br />
                     Type: {object.type} <br />
                     Phrase: {object.mentionPhrase} <br />
                     <button

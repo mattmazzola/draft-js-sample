@@ -18,6 +18,7 @@ export interface IObject {
 interface Props {
   object: IObject | null
   onSubmit: (object: IObject) => void
+  onReset: () => void
 }
 
 interface State {
@@ -50,8 +51,17 @@ export default class extends React.Component<Props, State> {
     }
   }
 
+  onReset = (e: React.FormEvent<any>) => {
+    e.preventDefault()
+
+    this.props.onReset()
+    this.setState({
+      ...initialState
+    })
+  }
+
   onSubmit = (e: React.FormEvent<any>) => {
-    e.preventDefault();
+    e.preventDefault()
 
     const newObject: IObject = {
       id: `object-${new Date().getTime()}`,
@@ -85,7 +95,7 @@ export default class extends React.Component<Props, State> {
 
   render() {
     return (
-      <form onSubmit={this.onSubmit} className="objectForm">
+      <form onSubmit={this.onSubmit} onReset={this.onReset} className="objectForm">
         <div>Title:</div>
         <div>
           <input
@@ -114,6 +124,7 @@ export default class extends React.Component<Props, State> {
 
         <div>
           <button type="submit">Submit</button>
+          <button type="reset">Reset</button>
         </div>
       </form>
     );
