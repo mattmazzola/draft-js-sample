@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { EditorState } from 'draft-js'
+import { EditorState, convertToRaw } from 'draft-js'
 import MentionEditor from './MentionEditor'
 import './ObjectEditor.css'
 
@@ -26,12 +26,14 @@ interface State {
   title: string
   type: string
   mentionEditorState: EditorState
+  editorKey: number
 }
 
 const initialState: State = {
   title: '',
   type: types[1],
-  mentionEditorState: EditorState.createEmpty()
+  mentionEditorState: EditorState.createEmpty(),
+  editorKey: 0
 }
 
 export default class extends React.Component<Props, State> {
@@ -42,12 +44,14 @@ export default class extends React.Component<Props, State> {
       this.setState({
         title: nextProps.object.title,
         type: nextProps.object.type,
-        mentionEditorState: EditorState.createEmpty()
+        mentionEditorState: EditorState.createEmpty(),
+        editorKey: this.state.editorKey + 1
       })
     }
     else {
       this.setState({
-        ...initialState
+        ...initialState,
+        editorKey: this.state.editorKey + 1
       })
     }
   }
@@ -57,18 +61,21 @@ export default class extends React.Component<Props, State> {
 
     this.props.onReset()
     this.setState({
-      ...initialState
+      ...initialState,
+      editorKey: this.state.editorKey + 1
     })
   }
 
   onSubmit = (e: React.FormEvent<any>) => {
     e.preventDefault()
 
+    const rawConent = convertToRaw(this.state.mentionEditorState.getCurrentContent())
+    const rawText = rawConent.blocks.reduce((s, block) => s += block.text, '')
     const newObject: IObject = {
       id: `object-${new Date().getTime()}`,
       title: this.state.title,
       type: this.state.type,
-      mentionPhrase: 'default mention phrase'
+      mentionPhrase: rawText
     }
 
     if (this.props.object) {
@@ -78,7 +85,8 @@ export default class extends React.Component<Props, State> {
 
     this.props.onSubmit(newObject)
     this.setState({
-      ...initialState
+      ...initialState,
+      editorKey: this.state.editorKey + 1
     })
   }
 
@@ -129,6 +137,7 @@ export default class extends React.Component<Props, State> {
           editorState={this.state.mentionEditorState}
           placeholder="Enter a mention phrase"
           onChange={this.onChangeMentionEditor}
+          key={this.state.editorKey}
         />
 
         <div>
