@@ -3,6 +3,8 @@ import { EditorState } from 'draft-js'
 import Editor from 'draft-js-plugins-editor'
 import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-plugin'
 import mentions, { IMention } from './mentions'
+import CustomEntryComponent from './MentionEditor/Entry'
+import CustomMention from './MentionEditor/Mention'
 import './MentionEditor.css'
 import 'draft-js/dist/Draft.css'
 import 'draft-js-mention-plugin/lib/plugin.css'
@@ -15,6 +17,8 @@ interface State {
   editorState: EditorState,
   suggestions: IMention[]
 }
+
+const mentionTrigger = '['
 
 const getEntities = (editorState: EditorState, entityType: string | null = null): any[] => {
   const content = editorState.getCurrentContent();
@@ -68,8 +72,9 @@ export default class extends React.Component<Props, State> {
 
     this.mentionPlugin = createMentionPlugin({
       entityMutability: 'IMMUTABLE',
-      mentionPrefix: '$',
-      mentionTrigger: '$'
+      mentionPrefix: '',
+      mentionTrigger,
+      mentionComponent: CustomMention
     });
   }
 
@@ -82,7 +87,7 @@ export default class extends React.Component<Props, State> {
   }
 
   onSearchChange = ({ value }: { value: string }) => {
-    const entities = getEntities(this.state.editorState, '$mention')
+    const entities = getEntities(this.state.editorState, `${mentionTrigger}mention`)
     const existingEntityIds = entities.map(e => e.entity.data.mention.id)
     const filteredMentions = mentions.filter(m => !existingEntityIds.includes(m.id))
     this.setState({
@@ -109,6 +114,7 @@ export default class extends React.Component<Props, State> {
         <MentionSuggestions
           onSearchChange={this.onSearchChange}
           suggestions={this.state.suggestions}
+          entryComponent={CustomEntryComponent}
         />
       </div>
     )

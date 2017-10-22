@@ -32,8 +32,7 @@ export default class extends React.Component<Props, State> {
 
     const newMention: IMention = {
       id: `mention-${(new Date().getTime())}`,
-      link: '',
-      name: this.state.newMentionValue
+      name: `[${this.state.newMentionValue}]`
     }
 
     this.setState(prevState => ({
@@ -47,7 +46,7 @@ export default class extends React.Component<Props, State> {
       selectedObject: null
     })
   }
-  
+
   onSubmitObject = (newObject: IObject) => {
     // Editing: Update object
     if (this.state.selectedObject) {
