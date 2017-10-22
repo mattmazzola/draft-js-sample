@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { EditorState } from 'draft-js'
 import MentionEditor from './MentionEditor'
 import './ObjectEditor.css'
 
@@ -24,13 +25,13 @@ interface Props {
 interface State {
   title: string
   type: string
-  mentionEditorState: any
+  mentionEditorState: EditorState
 }
 
 const initialState: State = {
   title: '',
   type: types[1],
-  mentionEditorState: null
+  mentionEditorState: EditorState.createEmpty()
 }
 
 export default class extends React.Component<Props, State> {
@@ -41,7 +42,7 @@ export default class extends React.Component<Props, State> {
       this.setState({
         title: nextProps.object.title,
         type: nextProps.object.type,
-        mentionEditorState: null
+        mentionEditorState: EditorState.createEmpty()
       })
     }
     else {
@@ -93,6 +94,12 @@ export default class extends React.Component<Props, State> {
     })
   }
 
+  onChangeMentionEditor = (editorState: EditorState) => {
+    this.setState({
+      mentionEditorState: editorState
+    })
+  }
+
   render() {
     return (
       <form onSubmit={this.onSubmit} onReset={this.onReset} className="objectForm">
@@ -119,7 +126,9 @@ export default class extends React.Component<Props, State> {
 
         <div>Mention Phrase:</div>
         <MentionEditor
+          editorState={this.state.mentionEditorState}
           placeholder="Enter a mention phrase"
+          onChange={this.onChangeMentionEditor}
         />
 
         <div>

@@ -10,11 +10,12 @@ import 'draft-js/dist/Draft.css'
 import 'draft-js-mention-plugin/lib/plugin.css'
 
 interface Props {
+  editorState: EditorState
   placeholder: string
+  onChange: (editorState: EditorState) => void
 }
 
 interface State {
-  editorState: EditorState,
   suggestions: IMention[]
 }
 
@@ -63,7 +64,6 @@ export default class extends React.Component<Props, State> {
   mentionPlugin: any
 
   state = {
-    editorState: EditorState.createEmpty(),
     suggestions: mentions
   }
 
@@ -81,13 +81,12 @@ export default class extends React.Component<Props, State> {
   setDomEditorRef = (ref: any) => this.domEditor = ref
 
   onChange = (editorState: EditorState) => {
-    this.setState({
-      editorState
-    })
+    this.props.onChange(editorState)
   }
 
   onSearchChange = ({ value }: { value: string }) => {
-    const entities = getEntities(this.state.editorState, `${mentionTrigger}mention`)
+    console.log(`onSearchChange: ${value}`)
+    const entities = getEntities(this.props.editorState, `${mentionTrigger}mention`)
     const existingEntityIds = entities.map(e => e.entity.data.mention.id)
     const filteredMentions = mentions.filter(m => !existingEntityIds.includes(m.id))
     this.setState({
@@ -106,7 +105,8 @@ export default class extends React.Component<Props, State> {
     return (
       <div className="editor" onClick={this.onClickEditorContainer}>
         <Editor
-          editorState={this.state.editorState}
+          placeholder={this.props.placeholder}
+          editorState={this.props.editorState}
           onChange={this.onChange}
           plugins={plugins}
           ref={this.setDomEditorRef}
