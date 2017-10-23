@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { EditorState, convertToRaw } from 'draft-js'
+import { EditorState, convertToRaw, convertFromRaw, RawDraftContentState } from 'draft-js'
 import MentionEditor from './MentionEditor'
 import './ObjectEditor.css'
 
@@ -14,6 +14,7 @@ export interface IObject {
   title: string
   type: string
   mentionPhrase: string
+  mentionRawContentState: RawDraftContentState
 }
 
 interface Props {
@@ -40,20 +41,26 @@ export default class extends React.Component<Props, State> {
   state = initialState
 
   componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.object !== null) {
-      this.setState({
-        title: nextProps.object.title,
-        type: nextProps.object.type,
-        mentionEditorState: EditorState.createEmpty(),
-        editorKey: this.state.editorKey + 1
-      })
-    }
-    else {
+    if (nextProps.object === null) {
       this.setState({
         ...initialState,
         editorKey: this.state.editorKey + 1
       })
+      return
     }
+
+    const { mentionRawContentState } = nextProps.object
+    const contentState = convertFromRaw(mentionRawContentState)
+    let editorState = EditorState.createWithContent(contentState)
+    //move focus to the end. 
+    editorState = EditorState.moveFocusToEnd(editorState)
+
+    this.setState({
+      title: nextProps.object.title,
+      type: nextProps.object.type,
+      mentionEditorState: editorState,
+      editorKey: this.state.editorKey + 1
+    })
   }
 
   onReset = (e: React.FormEvent<any>) => {
@@ -75,7 +82,8 @@ export default class extends React.Component<Props, State> {
       id: `object-${new Date().getTime()}`,
       title: this.state.title,
       type: this.state.type,
-      mentionPhrase: rawText
+      mentionPhrase: rawText,
+      mentionRawContentState: rawConent
     }
 
     if (this.props.object) {
