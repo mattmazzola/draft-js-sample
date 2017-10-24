@@ -76,8 +76,9 @@ export default class extends React.Component<Props, State> {
   onSubmit = (e: React.FormEvent<any>) => {
     e.preventDefault()
 
-    const rawConent = convertToRaw(this.state.mentionEditorState.getCurrentContent())
-    const rawText = rawConent.blocks.reduce((s, block) => s += block.text, '')
+    const contentState = this.state.mentionEditorState.getCurrentContent()
+    const rawConent = convertToRaw(contentState)
+    const rawText = contentState.getPlainText()
     const newObject: IObject = {
       id: `object-${new Date().getTime()}`,
       title: this.state.title,
