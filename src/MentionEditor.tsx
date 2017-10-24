@@ -7,7 +7,7 @@ import CustomEntryComponent from './MentionEditor/Entry'
 import CustomMention from './MentionEditor/Mention'
 import './MentionEditor.css'
 import 'draft-js/dist/Draft.css'
-import 'draft-js-mention-plugin/lib/plugin.css'
+// import 'draft-js-mention-plugin/lib/plugin.css'
 
 interface Props {
   editorState: EditorState

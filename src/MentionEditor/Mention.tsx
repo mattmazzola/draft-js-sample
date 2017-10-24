@@ -2,7 +2,7 @@ import * as React from 'react'
 
 export const CustomMention = ({ children, className }: any) => (
   <span
-    className={className}
+    className={"customMention " + className}
     spellCheck={false}
   >
     {children}
