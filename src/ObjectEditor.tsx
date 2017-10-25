@@ -52,9 +52,7 @@ export default class extends React.Component<Props, State> {
     const { mentionRawContentState } = nextProps.object
     const contentState = convertFromRaw(mentionRawContentState)
     let editorState = EditorState.createWithContent(contentState)
-    // move focus to the end 
     editorState = EditorState.moveFocusToEnd(editorState)
-    // move selection to end
     editorState = EditorState.moveSelectionToEnd(editorState)
 
     this.setState({

@@ -5,7 +5,7 @@
     background: #fefefe;
 }
 .DraftEditor-root {
-    line-height: 2.2rem;
+    line-height: 2em;
 }
 
 .draftJsMentionPlugin__mention__29BEd,
@@ -83,4 +83,8 @@
     -webkit-transform: scale(0);
             transform: scale(0);
 }
-  
+
+.customMention {
+    border: 1px solid rgba(0,0,0,0.1);
+    line-height: calc(2em - 6px);
+}
