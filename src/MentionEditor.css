@@ -4,6 +4,9 @@
     padding: 0.5em;
     background: #fefefe;
 }
+.DraftEditor-root {
+    line-height: 2.2rem;
+}
 
 .draftJsMentionPlugin__mention__29BEd,
 .draftJsMentionPlugin__mention__29BEd:visited {
