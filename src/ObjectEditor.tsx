@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { EditorState, convertToRaw, convertFromRaw, RawDraftContentState } from 'draft-js'
-import MentionEditor from './MentionEditor'
+import MentionEditor from './MentionEditor/MentionEditor'
 import './ObjectEditor.css'
 
 const types: string[] = [
