@@ -151,8 +151,8 @@ export default class extends React.Component<Props, State> {
         />
 
         <div>
-          <button type="submit">Submit</button>
-          <button type="reset">Reset</button>
+          <button type="submit" className="djs-button">Submit</button>
+          <button type="reset" className="djs-button">Reset</button>
         </div>
       </form>
     );

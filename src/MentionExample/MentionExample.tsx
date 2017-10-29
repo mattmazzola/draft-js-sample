@@ -94,7 +94,7 @@ export default class extends React.Component<Props, State> {
                   onChange={this.onChangeNewMention}
                 />
                 <div>
-                  <button type="submit">Create</button>
+                  <button type="submit" className="djs-button">Create</button>
                 </div>
               </form>
               <ul>
@@ -127,7 +127,7 @@ export default class extends React.Component<Props, State> {
                       <b>Title: {object.title}</b><br />
                       Type: {object.type} <br />
                       Phrase: {object.mentionPhrase} <br />
-                      <button
+                      <button className="djs-button"
                         type="button"
                         onClick={() => this.onClickObject(object)}
                       >Edit</button>

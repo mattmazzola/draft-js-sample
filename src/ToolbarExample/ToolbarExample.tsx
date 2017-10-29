@@ -113,7 +113,7 @@ export default class extends React.Component<Props, State> {
                 </label>
 
                 <div>
-                  <button type="submit">Create</button>
+                  <button type="submit" className="djs-button">Create</button>
                 </div>
               </form>
               <ul>
@@ -136,8 +136,8 @@ export default class extends React.Component<Props, State> {
                   onChange={this.onChangeEditorState}
                 />
                 <div>
-                  <button type="submit">Submit</button>
-                  <button type="reset">Reset</button>
+                  <button type="submit" className="djs-button">Submit</button>
+                  <button type="reset" className="djs-button">Reset</button>
                 </div>
               </form>
 

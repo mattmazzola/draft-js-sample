@@ -43,7 +43,7 @@ input[type="text"] {
   padding: 0.5em;
 }
 
-button {
+.djs-button {
   border-radius: 6px;
   border: none;
   background: #2D87DB;
