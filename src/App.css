@@ -24,6 +24,7 @@ header {
   grid-gap: 2em;
 }
 
+.classForm,
 .mentionForm {
   display: grid;
   grid-template-columns: 1fr min-content;

@@ -1,7 +1,6 @@
 import * as React from 'react'
 import ObjectEditor, { IObject } from './ObjectEditor'
 import mentions, { IMention } from './mentions'
-import './App.css'
 
 interface Props {
 }

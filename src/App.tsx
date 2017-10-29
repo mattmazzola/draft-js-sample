@@ -1,6 +1,6 @@
 import * as React from 'react'
-import MentionExample from './MentionExample'
-import ToolbarExample from './ToolbarExample'
+import MentionExample from './MentionExample/MentionExample'
+import ToolbarExample from './ToolbarExample/ToolbarExample'
 import './App.css'
 
 interface Props {
