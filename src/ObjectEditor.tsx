@@ -43,14 +43,11 @@ export default class extends React.Component<Props, State> {
   state = initialState
 
   componentWillReceiveProps(nextProps: Props) {
+    // If user selected an object, render the object's properties
     if (nextProps.object === null) {
-      this.setState({
-        ...initialState,
-        editorKey: this.state.editorKey + 1
-      })
       return
     }
-
+    
     const { mentionRawContentState } = nextProps.object
     const contentState = convertFromRaw(mentionRawContentState)
     let editorState = EditorState.createWithContent(contentState)
