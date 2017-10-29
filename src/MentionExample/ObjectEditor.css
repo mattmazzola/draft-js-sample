@@ -1,6 +1,7 @@
 .objectForm {
   display: grid;
-  grid-template-rows: min-content;
+  grid-auto-rows: min-content;
+  grid-auto-flow: row;
   grid-gap: 1em;
 }
 

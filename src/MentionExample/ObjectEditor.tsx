@@ -122,6 +122,7 @@ export default class extends React.Component<Props, State> {
         <div>Title:</div>
         <div>
           <input
+            type="text"
             value={this.state.title}
             onChange={this.onChangeTitle}
             placeholder="Enter a title"

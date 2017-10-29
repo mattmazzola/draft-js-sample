@@ -5,9 +5,10 @@ interface Props {
 }
 
 interface State {
-  wordTypes: IWordType[],
-  newWordTypeValue: string,
-  sentences: string[],
+  wordTypes: IWordType[]
+  newWordTypeValue: string
+  newWordTypeMultivalue: boolean
+  sentences: string[]
   selectedSentence: string | null
 }
 
@@ -15,6 +16,7 @@ export default class extends React.Component<Props, State> {
   state: State = {
     wordTypes,
     newWordTypeValue: '',
+    newWordTypeMultivalue: false,
     sentences: [],
     selectedSentence: null
   }
@@ -25,18 +27,25 @@ export default class extends React.Component<Props, State> {
     })
   }
 
+  onChangeWordTypeMultivalue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      newWordTypeMultivalue: e.target.checked
+    })
+  }
+
   onSubmitNewWordType = (e: React.FormEvent<any>) => {
     e.preventDefault()
 
     const newWordType: IWordType = {
       id: `wordType-${(new Date().getTime())}`,
       name: this.state.newWordTypeValue,
-      multivalue: false
+      multivalue: this.state.newWordTypeMultivalue
     }
 
     this.setState(prevState => ({
       wordTypes: [...prevState.wordTypes, newWordType],
-      newWordTypeValue: ''
+      newWordTypeValue: '',
+      newWordTypeMultivalue: false
     }))
   }
 
@@ -56,12 +65,25 @@ export default class extends React.Component<Props, State> {
               <h2>Total Word Types:</h2>
 
               <h3>Create Word Type:</h3>
-              <form onSubmit={this.onSubmitNewWordType} className="classForm" >
+              <form onSubmit={this.onSubmitNewWordType} className="classForm">
+                <div>Name:</div>
                 <input
+                  type="text"
                   required={true}
                   value={this.state.newWordTypeValue}
                   onChange={this.onChangenewWordType}
                 />
+
+                <label htmlFor="multivalue">
+                <input
+                  id="multivalue"
+                  type="checkbox"
+                  checked={this.state.newWordTypeMultivalue}
+                  onChange={this.onChangeWordTypeMultivalue}
+                />
+                  Multi-Value
+                </label>
+
                 <div>
                   <button type="submit">Create</button>
                 </div>

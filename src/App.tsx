@@ -12,21 +12,27 @@ interface State {
 export default class extends React.Component<Props, State> {
   render() {
     return (
-      <div id="content">
+      <div>
         <header>
-          <h1>Draft.js Editor Sample</h1>
+          <div className="container">
+            <h1>Draft.js Editor Sample</h1>
+          </div>
         </header>
 
-        <MentionExample />
+        <div className="container">
+          <MentionExample />
 
-        <ToolbarExample />
+          <ToolbarExample />
+        </div>
 
         <footer>
-          <h3>Resources</h3>
-          <ul>
-            <li><a href="https://draftjs.org">https://draftjs.org</a></li>
-            <li><a href="https://draftjs.slack.com">https://draftjs.slack.com</a></li>
-          </ul>
+          <div className="container">
+            <h3>Resources</h3>
+            <ul>
+              <li><a href="https://draftjs.org">https://draftjs.org</a></li>
+              <li><a href="https://draftjs.slack.com">https://draftjs.slack.com</a></li>
+            </ul>
+          </div>
         </footer>
       </div>
     );

@@ -6,32 +6,38 @@ body {
   font-size: 16px;
 }
 
-#content {
+.container {
   width: 800px;
   margin: 0 auto;
 }
 
 header {
+  background-color: rgba(0,0,0,0.1);
   text-align: center;
   padding: 1em;
-  border-bottom: 1px solid grey;
 }
 
 .lists-grid {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
-  grid-gap: 2em;
+  grid-gap: 4em;
 }
 
-.classForm,
 .mentionForm {
   display: grid;
   grid-template-columns: 1fr min-content;
   grid-gap: 1em;
 }
 
-input {
+.classForm {
+  display: grid;
+  grid-auto-rows: min-content;
+  grid-auto-flow: row;
+  grid-gap: 1em;
+}
+
+input[type="text"] {
   display: block;
   width: 100%;
   padding: 0.5em;
@@ -44,4 +50,9 @@ button {
   color: white;
   padding: 0.5em 1em;
   font-size: 1rem;
+}
+
+footer {
+  padding: 2em;
+  background-color: rgba(0,0,0,0.1)
 }
