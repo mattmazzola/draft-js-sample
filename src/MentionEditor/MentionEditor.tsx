@@ -2,7 +2,7 @@ import * as React from 'react'
 import { EditorState } from 'draft-js'
 import Editor from 'draft-js-plugins-editor'
 import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-plugin'
-import mentions, { IMention } from '../mentions'
+import { IMention } from '../mentions'
 import CustomEntryComponent from './Entry'
 import CustomMention from './Mention'
 import './MentionEditor.css'
@@ -13,6 +13,7 @@ interface Props {
   editorState: EditorState
   placeholder: string
   onChange: (editorState: EditorState) => void
+  allSuggestions: IMention[]
 }
 
 interface State {
@@ -64,7 +65,7 @@ export default class extends React.Component<Props, State> {
   mentionPlugin: any
 
   state = {
-    suggestions: mentions
+    suggestions: this.props.allSuggestions
   }
 
   constructor(props: Props) {
@@ -88,7 +89,7 @@ export default class extends React.Component<Props, State> {
     console.log(`onSearchChange: ${value}`)
     const entities = getEntities(this.props.editorState, `${mentionTrigger}mention`)
     const existingEntityIds = entities.map(e => e.entity.data.mention.id)
-    const filteredMentions = mentions.filter(m => !existingEntityIds.includes(m.id))
+    const filteredMentions = this.props.allSuggestions.filter(m => !existingEntityIds.includes(m.id))
     this.setState({
       suggestions: defaultSuggestionsFilter(value, filteredMentions),
     })

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { EditorState, convertToRaw, convertFromRaw, RawDraftContentState } from 'draft-js'
 import MentionEditor from './MentionEditor/MentionEditor'
+import { IMention } from './mentions'
 import './ObjectEditor.css'
 
 const types: string[] = [
@@ -18,6 +19,7 @@ export interface IObject {
 }
 
 interface Props {
+  suggestions: IMention[]
   object: IObject | null
   onSubmit: (object: IObject) => void
   onReset: () => void
@@ -143,6 +145,7 @@ export default class extends React.Component<Props, State> {
 
         <div>Mention Phrase:</div>
         <MentionEditor
+          allSuggestions={this.props.suggestions}
           editorState={this.state.mentionEditorState}
           placeholder="Enter a mention phrase"
           onChange={this.onChangeMentionEditor}

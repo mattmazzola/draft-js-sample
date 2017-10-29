@@ -109,6 +109,7 @@ export default class extends React.Component<Props, State> {
 
             <h3>Create new object:</h3>
             <ObjectEditor
+              suggestions={this.state.mentions}
               onSubmit={this.onSubmitObject}
               onReset={this.onResetObjectEditor}
               object={this.state.selectedObject}
