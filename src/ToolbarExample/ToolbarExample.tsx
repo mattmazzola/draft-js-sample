@@ -1,5 +1,7 @@
 import * as React from 'react'
 import wordTypes, { IWordType } from './classes'
+import { EditorState } from 'draft-js'
+import InlineToolbarExapmle from './InlineToolbarEditor'
 
 interface Props {
 }
@@ -8,6 +10,7 @@ interface State {
   wordTypes: IWordType[]
   newWordTypeValue: string
   newWordTypeMultivalue: boolean
+  inlineToolbarEditorState: EditorState
   sentences: string[]
   selectedSentence: string | null
 }
@@ -17,11 +20,12 @@ export default class extends React.Component<Props, State> {
     wordTypes,
     newWordTypeValue: '',
     newWordTypeMultivalue: false,
+    inlineToolbarEditorState: EditorState.createEmpty(),
     sentences: [],
     selectedSentence: null
   }
 
-  onChangenewWordType = (e: React.ChangeEvent<HTMLInputElement>) => {
+  onChangeNewWordType = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       newWordTypeValue: e.target.value
     })
@@ -49,6 +53,30 @@ export default class extends React.Component<Props, State> {
     }))
   }
 
+  onChangeEditorState = (editorState: EditorState) => {
+    this.setState({
+      inlineToolbarEditorState: editorState
+    })
+  }
+
+  onSubmit = (e: React.FormEvent<any>) => {
+    e.preventDefault()
+
+    console.log(this.state.sentences)
+    this.setState(prevState => ({
+      sentences: [...prevState.sentences, prevState.inlineToolbarEditorState.getCurrentContent().getPlainText()],
+      inlineToolbarEditorState: EditorState.createEmpty()
+    }))
+  }
+
+  onReset = (e: React.FormEvent<any>) => {
+    e.preventDefault()
+
+    this.setState({
+      inlineToolbarEditorState: EditorState.createEmpty()
+    })
+  }
+
   render() {
     return (
         <section>
@@ -71,7 +99,7 @@ export default class extends React.Component<Props, State> {
                   type="text"
                   required={true}
                   value={this.state.newWordTypeValue}
-                  onChange={this.onChangenewWordType}
+                  onChange={this.onChangeNewWordType}
                 />
 
                 <label htmlFor="multivalue">
@@ -92,18 +120,35 @@ export default class extends React.Component<Props, State> {
                 {this.state.wordTypes.length === 0
                   ? <li>There are no mentions</li>
                   : this.state.wordTypes.map(wordType =>
-                    <li key={wordType.id}>{wordType.id} : {wordType.name}</li>
+                    <li key={wordType.id}>{wordType.id} : {wordType.name} [{wordType.multivalue ? 'multi' : 'single'}]</li>
                   )}
               </ul>
             </div>
 
             <div>
-              <h2>Classif Sentence:</h2>
+              <h2>Classify Sentence:</h2>
               <h3>Create new sentence:</h3>
-
+              <form onSubmit={this.onSubmit} onReset={this.onReset} className="objectForm">
+                <div>Sentence:</div>
+                <InlineToolbarExapmle
+                  editorState={this.state.inlineToolbarEditorState}
+                  placeholder="Enter a sentence"
+                  onChange={this.onChangeEditorState}
+                />
+                <div>
+                  <button type="submit">Submit</button>
+                  <button type="reset">Reset</button>
+                </div>
+              </form>
 
               <h3>Classified sentences:</h3>
-
+              <ul>
+                {this.state.sentences.length === 0
+                  ? <li>There are no sentences</li>
+                  : this.state.sentences.map((sentence, i) =>
+                    <li key={i}>{sentence}</li>
+                  )}
+              </ul>
             </div>
           </div>
         </section>
