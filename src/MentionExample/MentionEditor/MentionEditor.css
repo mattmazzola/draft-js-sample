@@ -1,7 +1,7 @@
 .editor {
-    border: 1px solid #ddd;
+    border: 1px solid rgba(0,0,0,0.3);;
     cursor: text;
-    padding: 0.5em;
+    padding: 0.125em 0.5em;
     background: #fefefe;
 }
 .DraftEditor-root {
@@ -26,7 +26,7 @@
     background: #edf5fd;
     outline: 0; /* reset for :focus */
 }
-  
+
 .draftJsMentionPlugin__mention__29BEd:active {
     color: #9b7896;
     background: #b6c4d3;

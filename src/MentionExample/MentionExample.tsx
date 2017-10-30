@@ -89,6 +89,7 @@ export default class extends React.Component<Props, State> {
               <h3>Create Mention:</h3>
               <form onSubmit={this.onSubmitNewMention} className="mentionForm" >
                 <input
+                  type="text"
                   required={true}
                   value={this.state.newMentionValue}
                   onChange={this.onChangeNewMention}
