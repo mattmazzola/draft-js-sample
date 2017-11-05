@@ -79,79 +79,83 @@ export default class extends React.Component<Props, State> {
 
   render() {
     return (
-        <section>
-          <h2>Custom Inline Toolbar</h2>
-          <h3>Requirements:</h3>
-          <ul>
-            <li>When user selects text render custom toolbar with dropdown menu near text</li>
-            <li>After word type is selected from dropdown show text in different color</li>
-            <li>Open menu to select other word type or delete selection if clicking exisint entity</li>
-          </ul>
+      <section>
+        <header className="subheader">
+          <div className="container">
+            <h1>Custom Inline Toolbar</h1>
+            <h3>Requirements:</h3>
+            <ul>
+              <li>When user selects text render custom toolbar with dropdown menu near text</li>
+              <li>After word type is selected from dropdown show text in different color</li>
+              <li>Open menu to select other word type or delete selection if clicking exisint entity</li>
+            </ul>
+          </div>
+        </header>
 
-          <div className="lists-grid">
-            <div>
-              <h2>Total Word Types:</h2>
+        <div className="container lists-grid">
+          <div>
+            <h2>Total Word Types:</h2>
 
-              <h3>Create Word Type:</h3>
-              <form onSubmit={this.onSubmitNewWordType} className="classForm">
-                <div>Name:</div>
-                <input
-                  type="text"
-                  required={true}
-                  value={this.state.newWordTypeValue}
-                  onChange={this.onChangeNewWordType}
-                />
+            <h3>Create Word Type:</h3>
+            <form onSubmit={this.onSubmitNewWordType} className="classForm">
+              <div>Name:</div>
+              <input
+                type="text"
+                required={true}
+                value={this.state.newWordTypeValue}
+                onChange={this.onChangeNewWordType}
+              />
 
-                <label htmlFor="multivalue">
+              <label htmlFor="multivalue">
                 <input
                   id="multivalue"
                   type="checkbox"
                   checked={this.state.newWordTypeMultivalue}
                   onChange={this.onChangeWordTypeMultivalue}
                 />
-                  Multi-Value
+                Multi-Value
                 </label>
 
-                <div>
-                  <button type="submit" className="djs-button">Create</button>
-                </div>
-              </form>
-              <ul>
-                {this.state.wordTypes.length === 0
-                  ? <li>There are no mentions</li>
-                  : this.state.wordTypes.map(wordType =>
-                    <li key={wordType.id}>{wordType.id} : {wordType.name} [{wordType.multivalue ? 'multi' : 'single'}]</li>
-                  )}
-              </ul>
-            </div>
-
-            <div>
-              <h2>Classify Sentence:</h2>
-              <h3>Create new sentence:</h3>
-              <form onSubmit={this.onSubmit} onReset={this.onReset} className="objectForm">
-                <div>Sentence:</div>
-                <InlineToolbarExapmle
-                  editorState={this.state.inlineToolbarEditorState}
-                  placeholder="Enter a sentence"
-                  onChange={this.onChangeEditorState}
-                />
-                <div>
-                  <button type="submit" className="djs-button">Submit</button>
-                  <button type="reset" className="djs-button">Reset</button>
-                </div>
-              </form>
-
-              <h3>Classified sentences:</h3>
-              <ul>
-                {this.state.sentences.length === 0
-                  ? <li>There are no sentences</li>
-                  : this.state.sentences.map((sentence, i) =>
-                    <li key={i}>{sentence}</li>
-                  )}
-              </ul>
-            </div>
+              <div>
+                <button type="submit" className="djs-button">Create</button>
+              </div>
+            </form>
+            <ul>
+              {this.state.wordTypes.length === 0
+                ? <li>There are no mentions</li>
+                : this.state.wordTypes.map(wordType =>
+                  <li key={wordType.id}>{wordType.id} : {wordType.name} [{wordType.multivalue ? 'multi' : 'single'}]</li>
+                )}
+            </ul>
           </div>
-        </section>
+
+          <div>
+            <h2>Classify Sentence:</h2>
+            <h3>Create new sentence:</h3>
+            <form onSubmit={this.onSubmit} onReset={this.onReset} className="objectForm">
+              <div>Sentence:</div>
+              <InlineToolbarExapmle
+                editorState={this.state.inlineToolbarEditorState}
+                placeholder="Enter a sentence"
+                onChange={this.onChangeEditorState}
+              />
+              <div>
+                <button type="submit" className="djs-button">Submit</button>
+                <button type="reset" className="djs-button">Reset</button>
+              </div>
+            </form>
+
+            <h3>Classified sentences:</h3>
+            <ul>
+              {this.state.sentences.length === 0
+                ? <li>There are no sentences</li>
+                : this.state.sentences.map((sentence, i) =>
+                  <li key={i}>{sentence}</li>
+                )}
+            </ul>
+          </div>
+        </div>
+      </section>
     )
   }
 }

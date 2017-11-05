@@ -19,11 +19,9 @@ export default class extends React.Component<Props, State> {
           </div>
         </header>
 
-        <div className="container">
           <MentionExample />
 
           <ToolbarExample />
-        </div>
 
         <footer>
           <div className="container">

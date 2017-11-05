@@ -11,6 +11,10 @@ body {
   margin: 0 auto;
 }
 
+header.subheader {
+  background-color: rgba(0,0,0,0.2);
+  text-align: left;
+}
 header {
   background-color: rgba(0,0,0,0.1);
   text-align: center;

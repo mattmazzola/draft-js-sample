@@ -74,70 +74,74 @@ export default class extends React.Component<Props, State> {
 
   render() {
     return (
-        <section>
-          <h2>Custom mention editors</h2>
-          <h3>Requirements:</h3>
-          <ul>
-            <li>Demonstrate loading state from previously created object, editing object and saving</li>
-            <li>Demonstrate mentions to exclude those already included in the editor state</li>
-          </ul>
-
-          <div className="lists-grid">
-            <div>
-              <h2>Total Mentions:</h2>
-
-              <h3>Create Mention:</h3>
-              <form onSubmit={this.onSubmitNewMention} className="mentionForm" >
-                <input
-                  type="text"
-                  required={true}
-                  value={this.state.newMentionValue}
-                  onChange={this.onChangeNewMention}
-                />
-                <div>
-                  <button type="submit" className="djs-button">Create</button>
-                </div>
-              </form>
-              <ul>
-                {this.state.mentions.length === 0
-                  ? <li>There are no mentions</li>
-                  : this.state.mentions.map(mention =>
-                    <li key={mention.id}>{mention.id} : {mention.name}</li>
-                  )}
-              </ul>
-            </div>
-
-            <div>
-              <h2>Compound Objects:</h2>
-
-              <h3>Create new object:</h3>
-              <ObjectEditor
-                suggestions={this.state.mentions}
-                onSubmit={this.onSubmitObject}
-                onReset={this.onResetObjectEditor}
-                object={this.state.selectedObject}
-              />
-
-              <h3>Objects:</h3>
-              <ul>
-                {this.state.objects.length === 0
-                  ? <li>There are no objects</li>
-                  : this.state.objects.map(object =>
-                    <li key={object.id}>
-                      Id: {object.id}<br />
-                      <b>Title: {object.title}</b><br />
-                      Type: {object.type} <br />
-                      Phrase: {object.mentionPhrase} <br />
-                      <button className="djs-button"
-                        type="button"
-                        onClick={() => this.onClickObject(object)}
-                      >Edit</button>
-                    </li>
-                  )}
-              </ul>
-            </div>
+      <section>
+        <header className="subheader">
+          <div className="container">
+            <h1>Custom mention editors</h1>
+            <h3>Requirements:</h3>
+            <ul>
+              <li>Demonstrate loading state from previously created object, editing object and saving</li>
+              <li>Demonstrate mentions to exclude those already included in the editor state</li>
+            </ul>
           </div>
-        </section>
+        </header>
+
+        <div className="container lists-grid">
+          <div>
+            <h2>Total Mentions:</h2>
+
+            <h3>Create Mention:</h3>
+            <form onSubmit={this.onSubmitNewMention} className="mentionForm" >
+              <input
+                type="text"
+                required={true}
+                value={this.state.newMentionValue}
+                onChange={this.onChangeNewMention}
+              />
+              <div>
+                <button type="submit" className="djs-button">Create</button>
+              </div>
+            </form>
+            <ul>
+              {this.state.mentions.length === 0
+                ? <li>There are no mentions</li>
+                : this.state.mentions.map(mention =>
+                  <li key={mention.id}>{mention.id} : {mention.name}</li>
+                )}
+            </ul>
+          </div>
+
+          <div>
+            <h2>Compound Objects:</h2>
+
+            <h3>Create new object:</h3>
+            <ObjectEditor
+              suggestions={this.state.mentions}
+              onSubmit={this.onSubmitObject}
+              onReset={this.onResetObjectEditor}
+              object={this.state.selectedObject}
+            />
+
+            <h3>Objects:</h3>
+            <ul>
+              {this.state.objects.length === 0
+                ? <li>There are no objects</li>
+                : this.state.objects.map(object =>
+                  <li key={object.id}>
+                    Id: {object.id}<br />
+                    <b>Title: {object.title}</b><br />
+                    Type: {object.type} <br />
+                    Phrase: {object.mentionPhrase} <br />
+                    <button className="djs-button"
+                      type="button"
+                      onClick={() => this.onClickObject(object)}
+                    >Edit</button>
+                  </li>
+                )}
+            </ul>
+          </div>
+        </div>
+      </section>
     )
   }
 }
