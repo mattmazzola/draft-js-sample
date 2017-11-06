@@ -1,6 +1,7 @@
 import * as React from 'react'
 import MentionExample from './MentionExample/MentionExample'
 import ToolbarExample from './ToolbarExample/ToolbarExample'
+import SelectionExample from './SelectionExample/SelectionExample'
 import './App.css'
 
 interface Props {
@@ -19,10 +20,13 @@ export default class extends React.Component<Props, State> {
           </div>
         </header>
 
+        <div>
           <MentionExample />
 
           <ToolbarExample />
 
+          <SelectionExample />
+        </div>
         <footer>
           <div className="container">
             <h3>Resources</h3>

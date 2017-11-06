@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { EditorState, convertToRaw, convertFromRaw, RawDraftContentState } from 'draft-js'
+import { EditorState, convertFromRaw, convertToRaw, RawDraftContentState } from 'draft-js'
 import MentionEditor from './MentionEditor/MentionEditor'
 import { IMention } from './mentions'
 import './ObjectEditor.css'
@@ -48,8 +48,50 @@ export default class extends React.Component<Props, State> {
       return
     }
     
-    const { mentionRawContentState } = nextProps.object
-    const contentState = convertFromRaw(mentionRawContentState)
+    const { mentionPhrase } = nextProps.object
+    const rg = /\[[\s\w]+\]/g
+
+    const rawContent = {
+      blocks: [] as any[],
+      entityMap: {}
+    }
+
+    let endOfLastMatch = 0
+    let match
+    while(match = rg.exec(mentionPhrase)) {
+      const textBeforeMatch = mentionPhrase.slice(endOfLastMatch, match.index)
+      if (textBeforeMatch.length > 0) {
+        rawContent.blocks.push({
+          text: textBeforeMatch,
+          type: 'unstyled',
+          entityRanges: [],
+          key: `block-2`
+        })
+      }
+
+      const matchText = match[0]
+      const mentionName = matchText.substring(1, matchText.length - 1)
+      const entitykey = `entity-${Math.floor(Math.random() * 100)}`
+      const mention = this.props.suggestions.find(m => m.name === mentionName)
+      rawContent.blocks.push({
+        text: matchText,
+        type: 'unstyled',
+        entityRanges: [
+          {offset: match.index, length: matchText, key: entitykey }
+        ],
+        key: `block-${entitykey}`
+      })
+      rawContent.entityMap[entitykey] = {
+        type: '[mention',
+        mutability: 'IMMUTABLE',
+        data: {
+          mention
+        }
+      }
+
+    }
+
+    const contentState = convertFromRaw(rawContent)
     let editorState = EditorState.createWithContent(contentState)
     editorState = EditorState.moveFocusToEnd(editorState)
     editorState = EditorState.moveSelectionToEnd(editorState)
