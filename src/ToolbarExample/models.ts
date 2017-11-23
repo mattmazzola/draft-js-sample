@@ -1,5 +1,6 @@
 export interface Position {
   top: number
+  bottom: number
   left: number
 }
 

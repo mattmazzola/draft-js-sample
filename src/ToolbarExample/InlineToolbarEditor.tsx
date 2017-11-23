@@ -1,12 +1,13 @@
 import * as React from 'react'
 import { Editor, EditorState, SelectionState, getVisibleSelectionRect } from 'draft-js'
 import 'draft-js/dist/Draft.css'
+import './InlineToolbarEditor.css'
 import CustomToolbar from './CustomToolbar'
 import { IOption, Position } from './models'
 
-const getRelativeParent = (element: HTMLElement | null): HTMLElement | null => {
+const getRelativeParent = (element: HTMLElement | null): HTMLElement => {
   if (!element) {
-    return null;
+    return document.body;
   }
 
   const position = window.getComputedStyle(element).getPropertyValue('position');
@@ -33,6 +34,7 @@ export default class extends React.Component<Props, State> {
   state: State = {
     toolbarPosition: {
       top: 0,
+      bottom: 0,
       left: 0
     },
     isToolbarVisible: false
@@ -48,29 +50,35 @@ export default class extends React.Component<Props, State> {
   }
 
   onClickEditorContainer = () => {
-    this.domEditor.focus()
+    console.log('onClickEditorContainer')
+    // this.domEditor.focus()
   }
 
   onChangeSelection = (selectionState: SelectionState) => {
     setTimeout((() => {
       const relativeParent = getRelativeParent(this.toolbar.parentElement)
       const toolbarHeight = this.toolbar.clientHeight
-      const relativeRect = (relativeParent || document.body).getBoundingClientRect();
+      const relativeRect = relativeParent.getBoundingClientRect();
       const selectionRect = getVisibleSelectionRect(window)
       if (!selectionRect) {
         return
       }
-
       const position: Position = {
-        top: (selectionRect.top - relativeRect.top) - toolbarHeight,
+        top: (selectionRect.top - relativeRect.top) - toolbarHeight - 20,
+        bottom: relativeRect.height - (selectionRect.top - relativeRect.top) + 20,
         left: (selectionRect.left - relativeRect.left) + (selectionRect.width / 2),
       }
+      console.log(`selectionRect `, selectionRect)
+      console.log(`relativeParentRect `, relativeRect)
+      console.log(`top`, position.top)
+      console.log(`bottom`, position.bottom)
 
-      this.setState({
-        toolbarPosition: position,
-        isToolbarVisible: !selectionState.isCollapsed() && selectionState.getHasFocus()
-      })
-      console.log(selectionRect, selectionState)
+      const isToolbarVisible = !selectionState.isCollapsed() && selectionState.getHasFocus()
+
+      this.setState(prevState => ({
+        toolbarPosition: isToolbarVisible ? position : prevState.toolbarPosition,
+        isToolbarVisible
+      }))
     }).bind(this))
   }
 
@@ -80,7 +88,7 @@ export default class extends React.Component<Props, State> {
 
   render() {
     return (
-      <div className="editor" onClick={this.onClickEditorContainer}>
+      <div className="toolbar-editor" onClick={this.onClickEditorContainer}>
         <Editor
           placeholder={this.props.placeholder}
           editorState={this.props.editorState}

@@ -6,41 +6,84 @@ import { IOption, Position } from './models'
 interface Props {
   options: IOption[]
   position: Position
-  isVisible:  boolean
+  isVisible: boolean
 }
 
-export default class Toolbar extends React.Component<Props, {}> {
+interface State {
+  searchText: string
+  matchedOptions: IOption[]
+}
+
+const initialState: State = {
+  searchText: '',
+  matchedOptions: []
+}
+
+export default class Toolbar extends React.Component<Props, State> {
   private element: any
 
-  getStyle(position: Position) {
-    // overrideContent could for example contain a text input, hence we always show overrideContent
-    // TODO: Test readonly mode and possibly set isVisible to false if the editor is readonly
-    const style: any = { ...position }
+  state = initialState
 
-    if (this.props.isVisible) {
-      style.visibility = 'visible';
-      style.transform = 'translate(-50%) scale(1)';
-      style.transition = 'transform 0.15s cubic-bezier(.3,1.2,.2,1)';
-    } else {
-      style.transform = 'translate(-50%) scale(0)';
-      style.visibility = 'hidden';
+  componentWillReceiveProps(nextProps: Props) {
+    if (this.props.isVisible === false
+      && nextProps.isVisible === true) {
+      this.setState({
+        ...initialState
+      })
     }
-
-    return style;
   }
 
   onRef = (node: any) => {
     this.element = node
   }
 
+  preventDefault = (event: React.MouseEvent<any>) => {
+    console.log('preventDefault', event)
+    // event.stopPropagation()
+  }
+
+  onChangeSearchText = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchText = event.target.value
+    const matchedOptions = this.props.options.filter(option => option.name.startsWith(searchText))
+
+    this.setState({
+      searchText,
+      matchedOptions
+    })
+  }
+
+  getPosition = (position: Position) => {
+    const { bottom, left } = position
+
+    return {
+      bottom,
+      left
+    }
+  }
+
   render() {
     return (
       <div
+        onMouseDown={this.preventDefault}
         className={`custom-toolbar ${this.props.isVisible ? "custom-toolbar--visible" : ""}`}
-        style={this.getStyle(this.props.position)}
+        style={this.getPosition(this.props.position)}
         ref={this.onRef}
       >
-        Custom Toolbar
+        <div className="custom-toolbar__results">
+          {this.state.matchedOptions.length !== 0
+            && <ul>
+              {this.state.matchedOptions.map(option => <li key={option.id}>{option.name}</li>)}
+            </ul>}
+        </div>
+        <div className="custom-toolbar__search">
+          <span>Search for entities</span>
+          <input
+            type="text"
+            value={this.state.searchText}
+            className="custom-toolbar__input"
+            onChange={this.onChangeSearchText}
+          />
+        </div>
       </div>
     );
   }

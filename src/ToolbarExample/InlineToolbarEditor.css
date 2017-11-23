@@ -72,3 +72,12 @@
   border-width: 6px;
   margin-left: -6px;
 }
+
+
+.toolbar-editor {
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.3);
+  cursor: text;
+  padding: 0.125em 0.5em;
+  background: #fefefe;
+}
