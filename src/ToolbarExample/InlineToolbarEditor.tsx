@@ -86,6 +86,13 @@ export default class extends React.Component<Props, State> {
     this.toolbar = node.element
   }
 
+  onSelectOption = (option: IOption) => {
+    console.log(`option selected: `, option)
+    this.setState({
+      isToolbarVisible: false
+    })
+  }
+
   render() {
     return (
       <div className="toolbar-editor" onClick={this.onClickEditorContainer}>
@@ -101,6 +108,7 @@ export default class extends React.Component<Props, State> {
           isVisible={this.state.isToolbarVisible}
           ref={this.onToolbarRef}
           options={this.props.options}
+          onSelectOption={this.onSelectOption}
         />
       </div>
     )

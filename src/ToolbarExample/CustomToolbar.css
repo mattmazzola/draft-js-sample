@@ -24,6 +24,15 @@
 }
 
 .custom-toolbar__results {
-  padding: 0.5em;
+  margin: 0;
+  list-style: none;
+  padding: 0.5em 0;
   border-bottom: 1px solid lightgrey;
+}
+
+.custom-toolbar__result {
+  padding: 0.25em 0.5em;
+}
+.custom-toolbar__result--highlight {
+  background: rgb(187, 255, 187);
 }
