@@ -1,7 +1,9 @@
 import * as React from 'react'
 import wordTypes, { IWordType } from './classes'
 import { EditorState } from 'draft-js'
+import { createEditorStateWithText } from 'draft-js-plugins-editor'
 import InlineToolbarExapmle from './InlineToolbarEditor'
+import { IOption } from './models'
 
 interface Props {
 }
@@ -15,12 +17,18 @@ interface State {
   selectedSentence: string | null
 }
 
+const convertToOption = (wordType: IWordType): IOption =>
+  ({
+    id: wordType.id,
+    name: wordType.name
+  })
+
 export default class extends React.Component<Props, State> {
   state: State = {
     wordTypes,
     newWordTypeValue: '',
     newWordTypeMultivalue: false,
-    inlineToolbarEditorState: EditorState.createEmpty(),
+    inlineToolbarEditorState: createEditorStateWithText("test"),
     sentences: [],
     selectedSentence: null
   }
@@ -138,6 +146,7 @@ export default class extends React.Component<Props, State> {
                 editorState={this.state.inlineToolbarEditorState}
                 placeholder="Enter a sentence"
                 onChange={this.onChangeEditorState}
+                options={this.state.wordTypes.map(convertToOption)}
               />
               <div>
                 <button type="submit" className="djs-button">Submit</button>
