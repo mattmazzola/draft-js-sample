@@ -1,9 +1,9 @@
 import * as React from 'react'
 import wordTypes, { IWordType } from './classes'
-import { EditorState } from 'draft-js'
-import { createEditorStateWithText } from 'draft-js-plugins-editor'
+import { ContentBlock, ContentState, EditorState, CompositeDecorator } from 'draft-js'
 import InlineToolbarExapmle from './InlineToolbarEditor'
-import { IOption } from './models'
+import CustomEntity from './CustomEntity'
+import { IOption, customEntityType } from './models'
 
 interface Props {
 }
@@ -23,14 +23,38 @@ const convertToOption = (wordType: IWordType): IOption =>
     name: wordType.name
   })
 
+function findLinkEntities(contentBlock: ContentBlock, callback: any, contentState: ContentState) {
+  contentBlock.findEntityRanges(
+    (character) => {
+      const entityKey = character.getEntity()
+      return (
+        entityKey !== null &&
+        contentState.getEntity(entityKey).getType() === customEntityType
+      )
+    },
+    callback
+  )
+}
+
 export default class extends React.Component<Props, State> {
-  state: State = {
-    wordTypes,
-    newWordTypeValue: '',
-    newWordTypeMultivalue: false,
-    inlineToolbarEditorState: createEditorStateWithText("test"),
-    sentences: [],
-    selectedSentence: null
+  constructor(props: Props) {
+    super(props)
+
+    const decorator = new CompositeDecorator([
+      {
+        strategy: findLinkEntities,
+        component: CustomEntity,
+      }
+    ])
+
+    this.state = {
+      wordTypes,
+      newWordTypeValue: '',
+      newWordTypeMultivalue: false,
+      inlineToolbarEditorState: EditorState.createEmpty(decorator),
+      sentences: [],
+      selectedSentence: null
+    }
   }
 
   onChangeNewWordType = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,6 +86,13 @@ export default class extends React.Component<Props, State> {
   }
 
   onChangeEditorState = (editorState: EditorState) => {
+    this.setState({
+      inlineToolbarEditorState: editorState
+    })
+  }
+
+  onEntityCreated = (editorState: EditorState) => {
+    console.log(`ToolbarExample.onEntityCreated`, editorState)
     this.setState({
       inlineToolbarEditorState: editorState
     })
@@ -146,6 +177,7 @@ export default class extends React.Component<Props, State> {
                 editorState={this.state.inlineToolbarEditorState}
                 placeholder="Enter a sentence"
                 onChange={this.onChangeEditorState}
+                onEntityCreated={this.onEntityCreated}
                 options={this.state.wordTypes.map(convertToOption)}
               />
               <div>

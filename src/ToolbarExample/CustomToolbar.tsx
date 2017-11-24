@@ -2,9 +2,9 @@ import * as React from 'react'
 import './CustomToolbar.css'
 import { IOption, Position } from './models'
 
-
 interface Props {
   options: IOption[]
+  maxDisplayedOptions: number
   position: Position
   isVisible: boolean
   onSelectOption: (o: IOption) => void
@@ -28,18 +28,29 @@ const id = (x: number) => x
 const increment = (x: number, limit: number) => (x + 1) > limit ? 0 : x + 1
 const decrement = (x: number, limit: number) => (x - 1) < 0 ? limit : x - 1
 
-
 export default class Toolbar extends React.Component<Props, State> {
   private element: any
 
   state = initialState
 
+  constructor(props: Props) {
+    super(props)
+
+    this.state.matchedOptions = props.options.filter((_, i) => i < props.maxDisplayedOptions)
+  }
+
   componentWillReceiveProps(nextProps: Props) {
     if (this.props.isVisible === false
       && nextProps.isVisible === true) {
-      this.setState({
-        ...initialState
-      })
+      const matchedOptions = this.props.options
+        .filter(option => option.name.startsWith(this.state.searchText))
+        .filter((_, i) => i < nextProps.maxDisplayedOptions)
+
+      this.setState(prevState => ({
+        ...initialState,
+        matchedOptions,
+        highlightIndex: prevState.highlightIndex > (matchedOptions.length - 1) ? 0 : prevState.highlightIndex
+      }))
     }
   }
 
@@ -54,12 +65,10 @@ export default class Toolbar extends React.Component<Props, State> {
     switch (event.key) {
       case 'ArrowUp': {
         modifyFunction = decrement
-        event.stopPropagation()
         break;
       }
       case 'ArrowDown':
         modifyFunction = increment
-        event.stopPropagation()
         break;
       case 'Enter':
       case 'Tab':
@@ -89,7 +98,9 @@ export default class Toolbar extends React.Component<Props, State> {
 
   onChangeSearchText = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchText = event.target.value
-    const matchedOptions = this.props.options.filter(option => option.name.startsWith(searchText))
+    const matchedOptions = this.props.options
+      .filter(option => option.name.startsWith(searchText))
+      .filter((_, i) => i < this.props.maxDisplayedOptions)
 
     this.setState(prevState => ({
       searchText,
@@ -98,9 +109,16 @@ export default class Toolbar extends React.Component<Props, State> {
     }))
   }
 
+  onClickResult = (option: IOption) => {
+    console.log(`CustomToolbar.onClickResult: `, option)
+    this.props.onSelectOption(option)
+    this.setState({
+      ...initialState
+    })
+  }
+
   getPosition = (position: Position) => {
     const { bottom, left } = position
-    console.log(`highlightIndex `, this.state.highlightIndex)
     return {
       bottom,
       left
@@ -121,6 +139,7 @@ export default class Toolbar extends React.Component<Props, State> {
             {this.state.matchedOptions.map((option, i) =>
               <li
                 key={option.id}
+                onClick={() => this.onClickResult(option)}
                 className={`custom-toolbar__result ${this.state.highlightIndex === i ? 'custom-toolbar__result--highlight' : ''}`}
               >
                 {option.name}
@@ -128,8 +147,9 @@ export default class Toolbar extends React.Component<Props, State> {
             )}
           </ul>}
         <div className="custom-toolbar__search">
-          <span>Search for entities</span>
+          <label htmlFor="toolbar-input">Search for entities:</label>
           <input
+            id="toolbar-input"
             type="text"
             value={this.state.searchText}
             className="custom-toolbar__input"

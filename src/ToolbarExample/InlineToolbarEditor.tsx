@@ -1,9 +1,11 @@
 import * as React from 'react'
-import { Editor, EditorState, SelectionState, getVisibleSelectionRect } from 'draft-js'
+import { Editor, EditorState, Modifier, SelectionState, getVisibleSelectionRect } from 'draft-js'
 import 'draft-js/dist/Draft.css'
 import './InlineToolbarEditor.css'
 import CustomToolbar from './CustomToolbar'
-import { IOption, Position } from './models'
+import { IOption, Position, customEntityType } from './models'
+import { getSelectionStateDate } from './utilities'
+
 
 const getRelativeParent = (element: HTMLElement | null): HTMLElement => {
   if (!element) {
@@ -23,11 +25,13 @@ interface Props {
   editorState: EditorState
   placeholder: string
   onChange: (editorState: EditorState) => void
+  onEntityCreated: (editorState: EditorState) => void
 }
 
 interface State {
   toolbarPosition: Position
   isToolbarVisible: boolean
+  selectionState: SelectionState | null
 }
 
 export default class extends React.Component<Props, State> {
@@ -37,7 +41,8 @@ export default class extends React.Component<Props, State> {
       bottom: 0,
       left: 0
     },
-    isToolbarVisible: false
+    isToolbarVisible: false,
+    selectionState: null
   }
   toolbar: HTMLElement
   domEditor: any
@@ -68,16 +73,15 @@ export default class extends React.Component<Props, State> {
         bottom: relativeRect.height - (selectionRect.top - relativeRect.top) + 20,
         left: (selectionRect.left - relativeRect.left) + (selectionRect.width / 2),
       }
-      console.log(`selectionRect `, selectionRect)
-      console.log(`relativeParentRect `, relativeRect)
-      console.log(`top`, position.top)
-      console.log(`bottom`, position.bottom)
+
+      console.log(`InlineToolbarEditor.onChangeSelection.selectionState: `, getSelectionStateDate(selectionState))
 
       const isToolbarVisible = !selectionState.isCollapsed() && selectionState.getHasFocus()
 
       this.setState(prevState => ({
         toolbarPosition: isToolbarVisible ? position : prevState.toolbarPosition,
-        isToolbarVisible
+        isToolbarVisible,
+        selectionState
       }))
     }).bind(this))
   }
@@ -88,6 +92,24 @@ export default class extends React.Component<Props, State> {
 
   onSelectOption = (option: IOption) => {
     console.log(`option selected: `, option)
+
+    // Create entity representing option selected
+    const contentState = this.props.editorState.getCurrentContent()
+    const contentStateWithEntity = contentState.createEntity(
+      customEntityType,
+      'IMMUTABLE',
+      option
+    )
+    const entityKey = contentStateWithEntity.getLastCreatedEntityKey()
+    const selectionState = this.props.editorState.getSelection()
+    console.log(`currentSelectionState: `, getSelectionStateDate(selectionState))
+    const contentStateWithCustomEntity = Modifier.applyEntity(
+      contentStateWithEntity,
+      selectionState,
+      entityKey
+    );
+    const editorStateWithEntity = EditorState.set(this.props.editorState, { currentContent: contentStateWithCustomEntity });
+    this.props.onEntityCreated(editorStateWithEntity)
     this.setState({
       isToolbarVisible: false
     })
@@ -108,6 +130,7 @@ export default class extends React.Component<Props, State> {
           isVisible={this.state.isToolbarVisible}
           ref={this.onToolbarRef}
           options={this.props.options}
+          maxDisplayedOptions={4}
           onSelectOption={this.onSelectOption}
         />
       </div>

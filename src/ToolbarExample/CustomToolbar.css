@@ -1,11 +1,11 @@
 .custom-toolbar {
   position: absolute;
-  transform: translate(-50%); /* scale(0); */
+  transform: translate(-50%) scale(0);
   opacity: 0.5;
-  /* visibility: hidden; */
+  visibility: hidden;
   background: white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 .custom-toolbar--visible {
@@ -17,6 +17,12 @@
 
 .custom-toolbar__search {
   padding: 0.5em;
+}
+.custom-toolbar__search label {
+  font-size: 0.75rem;
+  padding-bottom: 0.25em;
+  display: block;
+  color: grey;
 }
 .custom-toolbar__input {
   padding: 0.25em;
@@ -32,7 +38,11 @@
 
 .custom-toolbar__result {
   padding: 0.25em 0.5em;
+  cursor: pointer;
+}
+.custom-toolbar__result:hover:not(.custom-toolbar__result--highlight) {
+  background: rgba(187, 255, 187, 0.2);
 }
 .custom-toolbar__result--highlight {
-  background: rgb(187, 255, 187);
+  background: rgba(187, 255, 187, 1.0);
 }
