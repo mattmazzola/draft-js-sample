@@ -23,7 +23,7 @@ export class CustomEntityContainer extends React.Component<Props, State> {
     isEditing: false
   }
 
-  onClickEdit = () => {
+  onClickName = () => {
     console.log(`onClickEdit`)
     this.setState(prevState => ({
       isEditing: !prevState.isEditing
@@ -54,9 +54,8 @@ export class CustomEntityContainer extends React.Component<Props, State> {
       <CustomEntity
         isEditing={this.state.isEditing}
         option={option}
-        onClickEdit={this.onClickEdit}
+        onClickName={this.onClickName}
         onClickDelete={this.onClickDelete}
-        onClickComplete={this.onClickComplete}
       >
         {this.props.children}
       </CustomEntity>

@@ -29,16 +29,19 @@
   color: greenyellow;
 }
 
-.blis-custom-entity-indicator__buttons {
+.blis-custom-entity-indicator__mincontent {
   position: absolute;
-  bottom: 20px;
-  width: 200%;
-  transform: translate(-25%);
+  bottom: 8px;
+  width: 600%;
+  left: -250%;
 }
 
-.blis-custom-entity-indicator__buttons button {
+.blis-custom-entity-indicator__controls {
+}
+
+.blis-custom-entity-indicator__controls button {
   font-size: 0.75rem;
-  padding: 0.0em 0.2em;
+  padding: 0.0em 0.3em;
   margin: 0;
   background: green;
   border: none;
@@ -46,12 +49,17 @@
   color: white;
   border-radius: 50%;
 }
-.blis-custom-entity-indicator__buttons button:not(:last-of-type) {
-  margin-right: 5px;
-}
 
 .blis-custom-entity-indicator__name {
   cursor: pointer;
+}
+.blis-custom-entity-indicator__name button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: green;
+  margin: 0;
+  padding: 0;
 }
 
 .blis-custom-entity-indicator__bracket {

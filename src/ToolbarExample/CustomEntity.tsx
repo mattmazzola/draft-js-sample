@@ -10,9 +10,8 @@ interface EntityComponentProps {
 interface Props extends EntityComponentProps {
   option: IOption
   isEditing: boolean
-  onClickEdit: () => void
+  onClickName: () => void
   onClickDelete: () => void
-  onClickComplete: () => void
 }
 
 export const CustomEntity = (props: Props) => {
@@ -20,20 +19,16 @@ export const CustomEntity = (props: Props) => {
   console.log(`CustomEntity.data: `, option)
   return (
     <span className={`blis-custom-entity ${isEditing ? 'blis-custom-entity--is-editing' : ''}`}>
-      <div className="blis-custom-entity-indicator">
-        <div className="blis-custom-entity-indicator__buttons">
-          {!isEditing
-            ? <button type="button" onClick={props.onClickEdit}>&#9998;</button>
-            : (
-              <div>
-                <button type="button" onClick={props.onClickDelete}>&#10006;</button>
-                <button type="button" onClick={props.onClickComplete}>&#10004;</button>
-              </div>
-            )
-          }
-        </div>
-        <div className="blis-custom-entity-indicator__name">
-          {option.name}
+      <div className="blis-custom-entity-indicator noselect">
+        <div className="blis-custom-entity-indicator__mincontent">
+          <div className="blis-custom-entity-indicator__controls">
+            {isEditing && <button type="button" onClick={props.onClickDelete}>&#10006;</button>}
+          </div>
+          <div className="blis-custom-entity-indicator__name">
+            <button type="button" onClick={props.onClickName}>
+              {option.name}
+            </button>
+          </div>
         </div>
         <div className="blis-custom-entity-indicator__bracket">
         </div>
