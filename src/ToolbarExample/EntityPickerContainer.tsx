@@ -1,5 +1,5 @@
 import * as React from 'react'
-import './CustomToolbar.css'
+import EntityPicker from './EntityPicker'
 import { IOption, Position } from './models'
 
 interface Props {
@@ -28,8 +28,8 @@ const id = (x: number) => x
 const increment = (x: number, limit: number) => (x + 1) > limit ? 0 : x + 1
 const decrement = (x: number, limit: number) => (x - 1) < 0 ? limit : x - 1
 
-export default class Toolbar extends React.Component<Props, State> {
-  private element: any
+export default class EntityPickerContainer extends React.Component<Props, State> {
+  element: HTMLElement
 
   state = initialState
 
@@ -52,10 +52,6 @@ export default class Toolbar extends React.Component<Props, State> {
         highlightIndex: prevState.highlightIndex > (matchedOptions.length - 1) ? 0 : prevState.highlightIndex
       }))
     }
-  }
-
-  onRef = (node: any) => {
-    this.element = node
   }
 
   onKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
@@ -96,8 +92,7 @@ export default class Toolbar extends React.Component<Props, State> {
     // event.stopPropagation()
   }
 
-  onChangeSearchText = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const searchText = event.target.value
+  onChangeSearchText = (searchText: string) => {
     const matchedOptions = this.props.options
       .filter(option => option.name.startsWith(searchText))
       .filter((_, i) => i < this.props.maxDisplayedOptions)
@@ -117,6 +112,10 @@ export default class Toolbar extends React.Component<Props, State> {
     })
   }
 
+  onRef = (node: EntityPicker) => {
+    this.element = node.element
+  }
+
   getPosition = (position: Position) => {
     const { bottom, left } = position
     return {
@@ -127,36 +126,20 @@ export default class Toolbar extends React.Component<Props, State> {
 
   render() {
     return (
-      <div
-        onMouseDown={this.onMouseDown}
-        onKeyDown={this.onKeyDown}
-        className={`custom-toolbar ${this.props.isVisible ? "custom-toolbar--visible" : ""}`}
-        style={this.getPosition(this.props.position)}
-        ref={this.onRef}
-      >
-        {this.state.matchedOptions.length !== 0
-          && <ul className="custom-toolbar__results">
-            {this.state.matchedOptions.map((option, i) =>
-              <li
-                key={option.id}
-                onClick={() => this.onClickResult(option)}
-                className={`custom-toolbar__result ${this.state.highlightIndex === i ? 'custom-toolbar__result--highlight' : ''}`}
-              >
-                {option.name}
-              </li>
-            )}
-          </ul>}
-        <div className="custom-toolbar__search">
-          <label htmlFor="toolbar-input">Search for entities:</label>
-          <input
-            id="toolbar-input"
-            type="text"
-            value={this.state.searchText}
-            className="custom-toolbar__input"
-            onChange={this.onChangeSearchText}
-          />
-        </div>
-      </div>
-    );
+        <EntityPicker
+          highlightIndex={this.state.highlightIndex}
+          isVisible={this.props.isVisible}
+          matchedOptions={this.state.matchedOptions}
+          maxDisplayedOptions={this.props.maxDisplayedOptions}
+          position={this.props.position}
+          ref={this.onRef}
+          searchText={this.state.searchText}
+
+          onChangeSearchText={this.onChangeSearchText}
+          onClickOption={this.onClickResult}
+          onKeyDown={this.onKeyDown}
+          onMouseDown={this.onMouseDown}
+        />
+    )
   }
 }

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Editor, EditorState, Modifier, SelectionState, getVisibleSelectionRect } from 'draft-js'
 import 'draft-js/dist/Draft.css'
 import './InlineToolbarEditor.css'
-import CustomToolbar from './CustomToolbar'
+import EntityPickerContainer from './EntityPickerContainer'
 import { IOption, IBlisCustomEntityData, Position, customEntityType } from './models'
 import { getSelectionStateDate } from './utilities'
 
@@ -88,7 +88,7 @@ export default class extends React.Component<Props, State> {
     }).bind(this))
   }
 
-  onToolbarRef = (node: any) => {
+  onToolbarRef = (node: EntityPickerContainer) => {
     this.toolbar = node.element
   }
 
@@ -130,7 +130,7 @@ export default class extends React.Component<Props, State> {
           handleDrop={() => "handled"}
           ref={this.setDomEditorRef}
         />
-        <CustomToolbar
+        <EntityPickerContainer
           position={this.state.toolbarPosition}
           isVisible={this.state.isToolbarVisible}
           ref={this.onToolbarRef}
