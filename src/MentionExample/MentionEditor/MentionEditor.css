@@ -1,10 +1,10 @@
-.editor {
+.mention-editor {
     border: 1px solid rgba(0,0,0,0.3);;
     cursor: text;
     padding: 0.125em 0.5em;
     background: #fefefe;
 }
-.DraftEditor-root {
+.mention-editor .DraftEditor-root {
     line-height: 2em;
 }
 

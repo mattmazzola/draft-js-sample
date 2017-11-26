@@ -3,7 +3,7 @@ import { Editor, EditorState, Modifier, SelectionState, getVisibleSelectionRect 
 import 'draft-js/dist/Draft.css'
 import './InlineToolbarEditor.css'
 import CustomToolbar from './CustomToolbar'
-import { IOption, Position, customEntityType } from './models'
+import { IOption, IBlisCustomEntityData, Position, customEntityType } from './models'
 import { getSelectionStateDate } from './utilities'
 
 
@@ -68,9 +68,11 @@ export default class extends React.Component<Props, State> {
       if (!selectionRect) {
         return
       }
+
+      const dropdownOffset = 40
       const position: Position = {
-        top: (selectionRect.top - relativeRect.top) - toolbarHeight - 20,
-        bottom: relativeRect.height - (selectionRect.top - relativeRect.top) + 20,
+        top: (selectionRect.top - relativeRect.top) - toolbarHeight - dropdownOffset,
+        bottom: relativeRect.height - (selectionRect.top - relativeRect.top) + dropdownOffset,
         left: (selectionRect.left - relativeRect.left) + (selectionRect.width / 2),
       }
 
@@ -95,20 +97,23 @@ export default class extends React.Component<Props, State> {
 
     // Create entity representing option selected
     const contentState = this.props.editorState.getCurrentContent()
+    const selectionState = this.props.editorState.getSelection()
+    console.log(`currentSelectionState: `, getSelectionStateDate(selectionState))
     const contentStateWithEntity = contentState.createEntity(
       customEntityType,
       'IMMUTABLE',
-      option
+      {
+        option,
+        selectionState
+      } as IBlisCustomEntityData
     )
     const entityKey = contentStateWithEntity.getLastCreatedEntityKey()
-    const selectionState = this.props.editorState.getSelection()
-    console.log(`currentSelectionState: `, getSelectionStateDate(selectionState))
     const contentStateWithCustomEntity = Modifier.applyEntity(
       contentStateWithEntity,
       selectionState,
       entityKey
-    );
-    const editorStateWithEntity = EditorState.set(this.props.editorState, { currentContent: contentStateWithCustomEntity });
+    )
+    const editorStateWithEntity = EditorState.push(this.props.editorState, contentStateWithCustomEntity, 'apply-entity')
     this.props.onEntityCreated(editorStateWithEntity)
     this.setState({
       isToolbarVisible: false

@@ -1,9 +1,9 @@
 import * as React from 'react'
 import wordTypes, { IWordType } from './classes'
-import { ContentBlock, ContentState, EditorState, CompositeDecorator } from 'draft-js'
+import { ContentBlock, ContentState, EditorState, EntityInstance, Modifier, CompositeDecorator } from 'draft-js'
 import InlineToolbarExapmle from './InlineToolbarEditor'
-import CustomEntity from './CustomEntity'
-import { IOption, customEntityType } from './models'
+import CustomEntityContainer from './CustomEntityContainer'
+import { IOption, IBlisCustomEntityData, customEntityType } from './models'
 
 interface Props {
 }
@@ -40,10 +40,19 @@ export default class extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
 
+    // TODO: Find more elegate way to spread props onto component
     const decorator = new CompositeDecorator([
       {
         strategy: findLinkEntities,
-        component: CustomEntity,
+        component: (componentProps: any) => (
+          <CustomEntityContainer
+            onClickDelete={this.onClickDeleteCustomEntity}
+            entityKey={componentProps.entityKey}
+            contentState={componentProps.contentState}
+          >
+            {componentProps.children}
+          </CustomEntityContainer>
+        )
       }
     ])
 
@@ -55,6 +64,28 @@ export default class extends React.Component<Props, State> {
       sentences: [],
       selectedSentence: null
     }
+  }
+
+  onClickDeleteCustomEntity = (entity: EntityInstance) => {
+    console.log(`onClickDeleteCustomEntity`, entity)
+    const customEntityData = entity.getData() as IBlisCustomEntityData
+    const entitySelectionState = customEntityData.selectionState
+    const editorState = this.state.inlineToolbarEditorState
+    const contentState = editorState.getCurrentContent()
+    const contentStateWithoutEntity = Modifier.applyEntity(
+      contentState,
+      entitySelectionState,
+      null!
+    )
+
+    // TODO: Find way to use EditorState.push to preserve undo mechanics;
+    // howver, when using this it removes decorators
+    // const editorStateWithoutEntity = EditorState.set(editorState, { currentContent: contentStateWithoutEntity })
+    const editorStateWithoutEntity = EditorState.push(editorState, contentStateWithoutEntity, 'apply-entity' )
+    
+    this.setState({
+      inlineToolbarEditorState: editorStateWithoutEntity
+    })
   }
 
   onChangeNewWordType = (e: React.ChangeEvent<HTMLInputElement>) => {

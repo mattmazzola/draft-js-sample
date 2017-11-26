@@ -147,7 +147,7 @@ export default class extends React.Component<Props, State> {
         </header>
 
         <div className="container lists-grid">
-          <div className="editor">
+          <div className="selection-editor">
             <Editor
               editorState={this.state.selectionEditorState}
               onChange={this.onChangeEditorState}

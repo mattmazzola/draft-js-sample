@@ -104,7 +104,7 @@ export default class extends React.Component<Props, State> {
     const plugins = [this.mentionPlugin]
 
     return (
-      <div className="editor" onClick={this.onClickEditorContainer}>
+      <div className="mention-editor" onClick={this.onClickEditorContainer}>
         <Editor
           placeholder={this.props.placeholder}
           editorState={this.props.editorState}
