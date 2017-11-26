@@ -69,7 +69,7 @@ export default class extends React.Component<Props, State> {
         return
       }
 
-      const dropdownOffset = 40
+      const dropdownOffset = 10
       const position: Position = {
         top: (selectionRect.top - relativeRect.top) - toolbarHeight - dropdownOffset,
         bottom: relativeRect.height - (selectionRect.top - relativeRect.top) + dropdownOffset,
